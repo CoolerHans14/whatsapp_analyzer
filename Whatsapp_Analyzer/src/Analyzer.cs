@@ -26,6 +26,19 @@ namespace whatsapp_analytic_tool
             foreach (var message in messagesList)
             {
                 var text = message.Substring(17).Split(":");
+                if (
+                    text[0].Contains(
+                        "hat eine neue Telefonnummer. Tippe, um eine Nachricht zu schreiben oder die neue Nummer hinzuzufügen.") ||
+                    text[0].Contains("hinzugefügt.") || text[0].Contains("hat die Gruppenbeschreibung geändert.") ||
+                    text[0].Contains("entfernt.") ||
+                    text[0].Contains("ist dieser Gruppe mit dem Einladungslink beigetreten.") ||
+                    text[0].Contains("hat die Gruppe verlassen.") || text[0].Contains("gewechselt.") ||
+                    text[0].Contains(
+                        "hat in den Gruppen-Einstellungen festgelegt, dass nur Admins die Gruppeninfo bearbeiten können.") ||
+                    text[0].Contains("hat das Gruppenbild geändert.") || text[0]
+                        .Contains(
+                            "Nachrichten an diese Gruppe sind jetzt mit Ende-zu-Ende-Verschlüsselung geschützt. Tippe für mehr Infos.")
+                ) continue;                                                                                                                            //for german Whatsapp.
                 if (!nameList.Contains(text[0]))
                 {
                     Users.Add(new User(text[0]));
@@ -47,8 +60,18 @@ namespace whatsapp_analytic_tool
             }
         }
 
-        private void WriteAnalyze()
+        public void WriteAnalyze(string path)
         {
+            var sw = new StreamWriter(path);
+            var userStatistics = "";
+            var userNames = "";
+            foreach (var user in Users)
+            {
+                userStatistics += "\n" + user.ToString();
+                userNames += user.Name + ", " + "\n";
+            }
+            sw.Write("Names:\n" + userNames + "\n\n" + userStatistics);
+            sw.Close();
         }
 
         private void ReadChat(string path)
@@ -58,6 +81,7 @@ namespace whatsapp_analytic_tool
             while ((chatLine = sr.ReadLine()) != null)
             {
                 if (chatLine.Length <= 0) continue;
+                
                 var isParse = true;
                 if (chatLine.Length > 14)
                 {
@@ -102,13 +126,15 @@ namespace whatsapp_analytic_tool
 
         public override string ToString()
         {
-            var temp = "";
-            foreach (var u in Users)
+            var userStatistics = "";
+            var userNames = "";
+            foreach (var user in Users)
             {
-                temp += "\n" + u.ToString();
+                userStatistics += "\n" + user.ToString();
+                userNames += user.Name + ", " + "\n";
             }
 
-            return temp;
+            return "Names:\n" + userNames + "\n\n" + userStatistics;
         }
     }
 }

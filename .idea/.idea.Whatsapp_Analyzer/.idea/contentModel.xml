@@ -14,6 +14,7 @@
             </e>
           </e>
         </e>
+        <e p="result.txt" t="Include" />
         <e p="src" t="Include">
           <e p="Analyzer.cs" t="Include" />
           <e p="Message.cs" t="Include" />
